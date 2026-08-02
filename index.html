@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anindyadyuti Chel — Portfolio</title>
+<meta name="description" content="Portfolio of Anindyadyuti Chel — builder, tinkerer, student.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-scene" aria-hidden="true">
+  <canvas id="bhCanvas"></canvas>
+  <div class="hud-label" id="hudTop">object <b>TON 618</b></div>
+  <div class="hud-label" id="hudBottom">r_s ≈ 12km &nbsp;·&nbsp; status: <b>critical</b></div>
+</div>
+
+<nav>
+  <div class="logo">A<span>·</span>CHEL</div>
+  <div class="navlinks">
+    <a href="#about">about</a>
+    <a href="#projects">projects</a>
+    <a href="#skills">skills</a>
+    <a href="#contact">contact</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow"><span class="dot"></span>available for internships &amp; collabs</div>
+  <h1 class="name">Anindyadyuti<br><span class="glow">Chel (Rick)</span></h1>
+  <p class="tagline">Student, builder, and general-purpose tinkerer. I like taking half-formed ideas
+    and pushing them until they compile, render, or ship.</p>
+  <div class="hero-cta">
+    <a href="https://github.com/rickbuildscoolstuff" class="btn primary">Visit GitHub→</a>
+    <a href="https://www.linkedin.com/in/anindyadyuti-chel-3b0252415/" class="btn ghost">Get in touch</a>
+  </div>
+  <div class="scroll-cue"><span class="bar"></span>scroll</div>
+</section>
+
+<section id="about" class="block">
+  <div class="rail">
+    <div class="rail-line"><div class="node"></div></div>
+    <div class="sec-head reveal">
+      <span class="sec-tag">About</span>
+      <h2 class="sec-title">Hi, I'm Anindyadyuti Chel.</h2>
+      <div class="about-grid">
+        <div class="about-copy">
+          <p>I'm a 19-year-old Electronics and Communication Engineering student from West Bengal, India, currently studying at Lovely Professional University (LPU).
+I'm passionate about Python, AI, Full-Stack Development, and Data Structures & Algorithms. I enjoy building projects that solve real-world problems, exploring new technologies, and constantly improving my skills through coding and hands-on development.
+Beyond programming, I create content on YouTube, love experimenting with ambitious ideas, and enjoy turning concepts into reality. My goal is to build impactful software, contribute to open source, and keep learning every day.
+
+Always building. Always learning.
+</p>
+          <p>I care about the details most people skip: load states, edge cases,
+            the difference between something that works and something that
+            feels right to use. This site is itself one of those projects.</p>
+        </div>
+        <div class="readout">
+          <div class="readout-title">// stats card</div>
+          <div class="row"><span>role</span><span>Student / Builder</span></div>
+          <div class="row"><span>focus</span><span>Web · Data · Hardware · Electronics</span></div>
+          <div class="row"><span>stack</span><span>Python3 · JS · Python · C++</span></div>
+          <div class="row"><span>status</span><span>Open for Projects</span></div>
+          <div class="row"><span>based in</span><span>WestBengal,India 🇮🇳</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="block">
+  <div class="rail">
+    <div class="rail-line"><div class="node"></div></div>
+    <div class="sec-head reveal">
+      <span class="sec-tag">Projects</span>
+      <h2 class="sec-title">A few things I've shipped, broken, and shipped again.</h2>
+
+      <div class="proj-grid">
+
+        <div class="card">
+          <div class="card-top">
+            <span class="card-id">mod / Object Detection - OpenCV</span>
+            <span class="status live">success</span>
+          </div>
+          <h3>Object Detection- TensorFlow & OpenCV</h3>
+          <p>Object Detection Using OpenCV is a computer vision project that identifies and locates objects in images or live video. Using OpenCV and a pre-trained model, it detects objects in real time, draws bounding boxes, and displays labels, making it useful for surveillance, robotics, and automation.</p>
+          <div class="tags"><span class="tag">MatPlotLib</span><span class="tag">Python</span><span class="tag">Open-CV</span></div>
+          <a class="card-link" href="https://github.com/rickbuildscoolstuff/Object-Detection-using-OpenCV" aria-label="View CampusConnect project">View project →</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <span class="card-id">mod / handwriting to text</span>
+            <span class="status wip">ongoing</span>
+          </div>
+          <h3>Handwriting to Text Converter - Python + TensorFlow</h3>
+          <p>Handwriting to Text Converter is a Python and TensorFlow project that converts handwritten text into editable digital text. It uses an AI model to recognize handwriting with good accuracy, making it easier to digitize notes, forms, and documents while reducing the need for manual typing.
+  </p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Pandas</span><span class="tag">Plotly</span></div>
+          <a class="card-link" href="#" aria-label="View GradeLens project">TO BE UPLOADED SOON ⚠️</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <span class="card-id">mod / pulse-desk</span>
+            <span class="status proto">prototype</span>
+          </div>
+          <h3>GameBoy II</h3>
+          <p>A self-built gaming station powered by a Raspberry Pi, designed to emulate classic retro gaming consoles. Simply connect it to any compatible display to enjoy a library of nostalgic games. The project demonstrates hardware integration, Linux configuration, emulator setup, and optimization for a compact, portable, and affordable gaming experience.</p>
+          <div class="tags"><span class="tag">RaspberryPi 4</span><span class="tag">C++</span><span class="tag">ArduinoIDE</span></div>
+          <a class="card-link" href="#" aria-label="View PulseDesk project">FILES NOT AVAILABLE(TEMPORARILY) ⚠️</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <span class="card-id">mod / student marks to csv</span>
+            <span class="status live">success</span>
+          </div>
+          <h3>Students Marks to CSV (APP)</h3>
+          <p>Student Result to Excel Sheet is a Python-based application that automates the conversion of student result data into well-structured Excel spreadsheets. It minimizes manual work, improves accuracy, organizes records efficiently, and simplifies result management for schools and educational institutions.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">csv</span><span class="tag">tkinter</span></div>
+          <a class="card-link" href="https://github.com/rickbuildscoolstuff/Student-Result-to-Excel-Sheet-Creation-using-Python." aria-label="View Lexicon project">View project →</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="block">
+  <div class="rail">
+    <div class="rail-line"><div class="node"></div></div>
+    <div class="sec-head reveal">
+      <span class="sec-tag">Toolchain</span>
+      <h2 class="sec-title">What I actually reach for.</h2>
+      <div class="stack-groups">
+        <div class="stack-card">
+          <h4>Languages</h4>
+          <div class="chip-row">
+            <span class="chip">JavaScript</span><span class="chip">Python</span>
+            <span class="chip">C++</span><span class="chip">SQL</span>
+          </div>
+        </div>
+        <div class="stack-card">
+          <h4>Frameworks &amp; Tools</h4>
+          <div class="chip-row">
+            <span class="chip">Node.js</span>
+            <span class="chip">Git</span>
+          </div>
+        </div>
+        <div class="stack-card">
+          <h4>Currently learning</h4>
+          <div class="chip-row">
+            <span class="chip">C</span><span class="chip">C#</span>
+            <span class="chip">TensorFlow</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="block">
+  <div class="rail">
+    <div class="rail-line"><div class="node"></div></div>
+    <div class="sec-head reveal">
+      <span class="sec-tag">Contact</span>
+      <h2 class="sec-title">Say hello. I read everything myself.</h2>
+      <div class="terminal">
+        <div class="term-bar"><span></span><span></span><span></span></div>
+        <div class="term-body">
+          <div class="term-line"><span class="prompt">$</span> email <a href="mailto:anindyadyutichel@gmail.com">anindyadyutichel@gmail.com</a></div>
+          <div class="term-line"><span class="prompt">$</span> github <a href="https://github.com/rickbuildscoolstuff" target="_blank" rel="noopener">github.com/rickbuildscoolstuff</a></div>
+          <div class="term-line"><span class="prompt">$</span> linkedin <a href="https://www.linkedin.com/in/anindyadyuti-chel-3b0252415/" target="_blank" rel="noopener">linkedin.com/in/anindyadyuti</a></div>
+          <div class="term-line"><span class="prompt">$</span> <span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Anindyadyuti Chel — built from scratch, one late night at a time.</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
