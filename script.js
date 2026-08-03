@@ -27,15 +27,25 @@
     const hudBottom = document.getElementById('hudBottom');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // treat small screens / touch devices as "mobile": far cheaper scene settings
+    const isMobile = window.matchMedia('(max-width: 820px)').matches ||
+                      window.matchMedia('(pointer: coarse)').matches;
+
+    // if the tab is backgrounded, stop drawing entirely
+    let isHidden = document.hidden;
+    document.addEventListener('visibilitychange', ()=>{ isHidden = document.hidden; });
+
     let W, H, cx, cy, dpr;
     const VOID = '9,12,17';
     const RED = [229,9,20];        // deep red
     const VERMILLION = [227,66,38]; // warm red-orange accent, mixed with the red glow
 
-    // twinkling starfield
+    // twinkling starfield (far fewer stars on mobile)
     let stars = [];
     function generateStars(){
-      const count = Math.round((W*H)/9000);
+      const divisor = isMobile ? 32000 : 9000;
+      const maxStars = isMobile ? 40 : 260;
+      const count = Math.min(Math.round((W*H)/divisor), maxStars);
       stars = Array.from({length:count}, ()=>({
         x: Math.random()*W,
         y: Math.random()*H,
@@ -46,10 +56,11 @@
       }));
     }
 
-    // comets that streak across every few seconds
+    // comets that streak across every few seconds (disabled on mobile — pure decoration, costly trails)
     let comets = [];
     let nextCometAt = performance.now() + (3000 + Math.random()*2000);
     function spawnComet(){
+      if(isMobile) return;
       const fromLeft = Math.random() < 0.5;
       const startY = H*(0.05 + Math.random()*0.5);
       const angle = (fromLeft ? 1 : -1) * (0.28 + Math.random()*0.18); // downward diagonal
@@ -64,7 +75,8 @@
     }
 
     function resize(){
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // mobile screens are almost always high-DPI but gain little from it here — cap at 1
+      dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
       W = window.innerWidth; H = window.innerHeight;
       canvas.width = W*dpr; canvas.height = H*dpr;
       canvas.style.width = W+'px'; canvas.style.height = H+'px';
@@ -78,7 +90,7 @@
     resize();
 
     // orbiting robotic "data node" particles, Keplerian-ish (closer = faster)
-    const N = 46;
+    const N = isMobile ? 14 : 46;
     const particles = [];
     for(let i=0;i<N;i++){
       const rx = 95 + Math.random()*320;      // orbit radius (x)
@@ -94,10 +106,11 @@
     }
 
     let diskRot = 0;
+    const RING_STEP = isMobile ? 0.12 : 0.05; // coarser polygons on mobile = far fewer trig calls
 
     function ringPath(rx, ry, rot){
       ctx.beginPath();
-      for(let a=0;a<=Math.PI*2+0.05;a+=0.05){
+      for(let a=0;a<=Math.PI*2+RING_STEP;a+=RING_STEP){
         const x = cx + Math.cos(a)*rx;
         const y = cy + Math.sin(a)*ry + Math.sin(a+rot)*6;
         if(a===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
@@ -120,44 +133,47 @@
       });
       ctx.restore();
 
-      // comets streaking past
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      for(let i=comets.length-1;i>=0;i--){
-        const c = comets[i];
-        c.x += c.vx; c.y += c.vy;
-        c.trail.push({x:c.x,y:c.y});
-        if(c.trail.length > 22) c.trail.shift();
+      // comets streaking past (skipped entirely on mobile)
+      if(!isMobile){
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for(let i=comets.length-1;i>=0;i--){
+          const c = comets[i];
+          c.x += c.vx; c.y += c.vy;
+          c.trail.push({x:c.x,y:c.y});
+          if(c.trail.length > 22) c.trail.shift();
 
-        for(let k=0;k<c.trail.length-1;k++){
-          const p0 = c.trail[k], p1 = c.trail[k+1];
-          const a = (k/c.trail.length) * 0.85;
+          for(let k=0;k<c.trail.length-1;k++){
+            const p0 = c.trail[k], p1 = c.trail[k+1];
+            const a = (k/c.trail.length) * 0.85;
+            ctx.beginPath();
+            ctx.moveTo(p0.x,p0.y);
+            ctx.lineTo(p1.x,p1.y);
+            ctx.strokeStyle = `rgba(255,255,255,${a.toFixed(3)})`;
+            ctx.lineWidth = 1.6 * (k/c.trail.length) + 0.3;
+            ctx.stroke();
+          }
           ctx.beginPath();
-          ctx.moveTo(p0.x,p0.y);
-          ctx.lineTo(p1.x,p1.y);
-          ctx.strokeStyle = `rgba(255,255,255,${a.toFixed(3)})`;
-          ctx.lineWidth = 1.6 * (k/c.trail.length) + 0.3;
-          ctx.stroke();
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.shadowColor = 'rgba(255,255,255,0.9)';
+          ctx.shadowBlur = 10;
+          ctx.arc(c.x, c.y, 1.8, 0, Math.PI*2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          if(c.x < -60 || c.x > W+60 || c.y < -60 || c.y > H+60) comets.splice(i,1);
         }
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(255,255,255,0.95)';
-        ctx.shadowColor = 'rgba(255,255,255,0.9)';
-        ctx.shadowBlur = 10;
-        ctx.arc(c.x, c.y, 1.8, 0, Math.PI*2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        if(c.x < -60 || c.x > W+60 || c.y < -60 || c.y > H+60) comets.splice(i,1);
-      }
-      ctx.restore();
-      if(!reduceMotion && t > nextCometAt){
-        spawnComet();
-        nextCometAt = t + (3000 + Math.random()*2000);
+        ctx.restore();
+        if(!reduceMotion && t > nextCometAt){
+          spawnComet();
+          nextCometAt = t + (3000 + Math.random()*2000);
+        }
       }
 
-      // faint accretion disk rings (robotic HUD orbit lines)
+      // faint accretion disk rings (robotic HUD orbit lines) — fewer rings on mobile
       ctx.save();
-      for(let i=0;i<3;i++){
+      const ringCount = isMobile ? 2 : 3;
+      for(let i=0;i<ringCount;i++){
         const rx = 168 + i*70;
         const ry = rx*0.34;
         ringPath(rx, ry, diskRot*(1+i*0.15));
@@ -170,7 +186,8 @@
       // glowing accretion arcs (the "light" bending around the hole) — red/vermillion mix
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
-      for(let i=0;i<2;i++){
+      const arcCount = isMobile ? 1 : 2;
+      for(let i=0;i<arcCount;i++){
         const rx = 214 + i*48;
         const ry = rx*0.30;
         const grad = ctx.createLinearGradient(cx-rx, cy, cx+rx, cy);
@@ -205,6 +222,7 @@
       ctx.fill();
 
       // thin photon-ring rim (robotic scanner edge), warm mixed color
+      // shadowBlur is very expensive on mobile canvas rasterizers — skip it there
       const rimGrad = ctx.createLinearGradient(cx-coreR, cy, cx+coreR, cy);
       rimGrad.addColorStop(0, `rgba(${RED},0.95)`);
       rimGrad.addColorStop(0.5, `rgba(${VERMILLION},0.95)`);
@@ -213,8 +231,10 @@
       ctx.arc(cx,cy,coreR+2.2,0,Math.PI*2);
       ctx.strokeStyle = rimGrad;
       ctx.lineWidth = 1.6;
-      ctx.shadowColor = `rgba(${VERMILLION},0.8)`;
-      ctx.shadowBlur = 14;
+      if(!isMobile){
+        ctx.shadowColor = `rgba(${VERMILLION},0.8)`;
+        ctx.shadowBlur = 14;
+      }
       ctx.stroke();
       ctx.shadowBlur = 0;
 
@@ -227,18 +247,20 @@
         const y = cy + Math.sin(p.angle)*p.ry + Math.sin(p.angle*2+p.tilt)*4;
         return {x,y,p};
       });
-      // faint links between nearby nodes -> circuit / neural feel
-      for(let i=0;i<pos.length;i++){
-        for(let j=i+1;j<pos.length;j++){
-          const dx = pos[i].x-pos[j].x, dy = pos[i].y-pos[j].y;
-          const d = Math.sqrt(dx*dx+dy*dy);
-          if(d < 46){
-            ctx.beginPath();
-            ctx.moveTo(pos[i].x,pos[i].y);
-            ctx.lineTo(pos[j].x,pos[j].y);
-            ctx.strokeStyle = `rgba(${RED},${0.12*(1-d/46)})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
+      // faint links between nearby nodes -> circuit / neural feel (skipped on mobile, O(n²) cost)
+      if(!isMobile){
+        for(let i=0;i<pos.length;i++){
+          for(let j=i+1;j<pos.length;j++){
+            const dx = pos[i].x-pos[j].x, dy = pos[i].y-pos[j].y;
+            const d = Math.sqrt(dx*dx+dy*dy);
+            if(d < 46){
+              ctx.beginPath();
+              ctx.moveTo(pos[i].x,pos[i].y);
+              ctx.lineTo(pos[j].x,pos[j].y);
+              ctx.strokeStyle = `rgba(${RED},${0.12*(1-d/46)})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
           }
         }
       }
@@ -246,8 +268,10 @@
         const col = p.vermillion ? VERMILLION : RED;
         ctx.beginPath();
         ctx.fillStyle = `rgba(${col},0.9)`;
-        ctx.shadowColor = `rgba(${col},0.9)`;
-        ctx.shadowBlur = 6;
+        if(!isMobile){
+          ctx.shadowColor = `rgba(${col},0.9)`;
+          ctx.shadowBlur = 6;
+        }
         ctx.rect(x-p.size/2, y-p.size/2, p.size, p.size);
         ctx.fill();
         ctx.shadowBlur = 0;
@@ -269,10 +293,22 @@
     window.addEventListener('scroll', updateScrollZoom, {passive:true});
     updateScrollZoom();
 
+    // cap the frame rate on mobile (~30fps) instead of running full 60fps every tick
+    const FRAME_INTERVAL = isMobile ? 1000/30 : 0;
+    let lastFrameTime = 0;
+
     if(reduceMotion){
       drawFrame(performance.now());
     } else {
-      function loop(t){ drawFrame(t); updateScrollZoom(); requestAnimationFrame(loop); }
+      function loop(t){
+        if(!isHidden){
+          if(!FRAME_INTERVAL || (t - lastFrameTime) >= FRAME_INTERVAL){
+            drawFrame(t);
+            lastFrameTime = t;
+          }
+        }
+        requestAnimationFrame(loop);
+      }
       requestAnimationFrame(loop);
     }
   })();
